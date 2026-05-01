@@ -18,7 +18,6 @@ body{
     text-align:center;
 }
 
-/* GRID BACKGROUND */
 body::before{
     content:"";
     position:fixed;
@@ -30,11 +29,9 @@ body::before{
     z-index:-1;
 }
 
-/* SCREENS */
 .screen{display:none;}
 .active{display:block;}
 
-/* BOX */
 .box{
     margin:0;
     padding:20px;
@@ -45,7 +42,6 @@ body::before{
     box-shadow:0 0 25px rgba(0,255,255,0.25);
 }
 
-/* INPUT */
 .input{
     width:90%;
     padding:12px;
@@ -54,11 +50,8 @@ body::before{
     color:#00ffff;
     border-radius:12px;
     margin:10px;
-    outline:none;
-    box-shadow:0 0 10px rgba(0,255,255,0.3);
 }
 
-/* BUTTON ROW */
 .row{
     display:flex;
     justify-content:center;
@@ -66,33 +59,20 @@ body::before{
     flex-wrap:wrap;
 }
 
-/* BUTTON */
 .btn{
     padding:10px 14px;
     border:1px solid #00ffff;
     border-radius:12px;
     cursor:pointer;
-    transition:0.2s;
-    box-shadow:0 0 10px rgba(0,255,255,0.2);
 }
 
-.btn:hover{
-    background:#00ffff;
-    color:#000;
-    box-shadow:0 0 20px #00ffff;
-}
-
-/* KEY BOX */
 .keyBox{
     margin-top:20px;
     padding:15px;
     border:1px solid #00ffff;
     border-radius:12px;
-    font-size:18px;
-    box-shadow:0 0 20px rgba(0,255,255,0.3);
 }
 
-/* COPY */
 .copy{
     margin-top:10px;
     padding:12px;
@@ -100,15 +80,11 @@ body::before{
     color:#000;
     border-radius:12px;
     cursor:pointer;
-    box-shadow:0 0 20px rgba(0,255,255,0.5);
 }
 
-/* TIMER */
 .timer{
     margin-top:10px;
-    font-size:20px;
     color:#00ff88;
-    text-shadow:0 0 10px #00ff88;
 }
 
 /* SENSI LOADING */
@@ -138,7 +114,7 @@ body::before{
 <div id="keyScreen" class="screen active">
 <div class="box">
 
-<h2>FAKE NINJA 🔥</h2>
+<h2>AIMBOT + 60% NO RECOIL SENSITIVITY 🔥</h2>
 
 <input id="keyInput" class="input" placeholder="ENTER KEY">
 
@@ -150,7 +126,7 @@ body::before{
 
 <div class="keyBox" id="keyDisplay">NO KEY GENERATED</div>
 
-<div class="copy" onclick="copyKey()">COPY KEY(it nah work)</div>
+<div class="copy" onclick="copyKey()">COPY KEY</div>
 
 <div class="timer" id="timer"></div>
 
@@ -183,7 +159,7 @@ body::before{
 
 /* GENERATE KEY */
 function generateKey(){
-let k="MEL1OX-SENSI-"+Math.random().toString(36).substring(2,8).toUpperCase();
+let k="NINJA-"+Math.random().toString(36).substring(2,8).toUpperCase();
 let exp=Date.now()+60000;
 
 localStorage.setItem("key",k);
@@ -207,16 +183,17 @@ document.getElementById("timer").innerText=Math.floor(left/1000)+"s";
 },1000);
 }
 
-/* GENERATE BUTTON */
+/* 🔥 FIXED GENERATE BUTTON */
 function goGenerate(){
-localStorage.setItem("gen","1");
-window.location.href="https://alpharede.com/E3tBOqLO9bC";
+    // send user to your 6-step link WITH return flag
+    window.location.href = "https://alpharede.com/vNixX14lQk4";
 }
 
-/* RETURN */
-if(localStorage.getItem("gen")){
-generateKey();
-localStorage.removeItem("gen");
+/* 🔥 ONLY GENERATE IF RETURN HAS ?done=1 */
+const params = new URLSearchParams(window.location.search);
+
+if(params.get("done") === "1"){
+    generateKey();
 }
 
 /* COPY */
@@ -246,7 +223,7 @@ document.getElementById("status").innerText="INVALID KEY";
 }
 }
 
-/* DEVICE DETECT */
+/* DEVICE */
 function getDevice(){
 let ua=navigator.userAgent;
 if(/Android/i.test(ua)) return "Android";
