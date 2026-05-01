@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meliox Glow System</title>
+
+<style>
+body{
+    margin:0;
+    font-family:monospace;
+    background:#0a0f14;
+    color:#00ffff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    text-align:center;
+}
+
+/* GRID BACKGROUND */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+    linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+    background-size:40px 40px;
+    z-index:-1;
+}
+
+/* SCREENS */
+.screen{display:none;}
+.active{display:block;}
+
+/* BOX */
+.box{
+    margin:0;
+    padding:20px;
+    width:90%;
+    max-width:400px;
+    border-radius:20px;
+    background:rgba(10,20,30,0.9);
+    box-shadow:0 0 25px rgba(0,255,255,0.25);
+}
+
+/* INPUT */
+.input{
+    width:90%;
+    padding:12px;
+    background:#000;
+    border:1px solid #00ffff;
+    color:#00ffff;
+    border-radius:12px;
+    margin:10px;
+    outline:none;
+    box-shadow:0 0 10px rgba(0,255,255,0.3);
+}
+
+/* BUTTON ROW */
+.row{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+/* BUTTON */
+.btn{
+    padding:10px 14px;
+    border:1px solid #00ffff;
+    border-radius:12px;
+    cursor:pointer;
+    transition:0.2s;
+    box-shadow:0 0 10px rgba(0,255,255,0.2);
+}
+
+.btn:hover{
+    background:#00ffff;
+    color:#000;
+    box-shadow:0 0 20px #00ffff;
+}
+
+/* KEY BOX */
+.keyBox{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #00ffff;
+    border-radius:12px;
+    font-size:18px;
+    box-shadow:0 0 20px rgba(0,255,255,0.3);
+}
+
+/* COPY */
+.copy{
+    margin-top:10px;
+    padding:12px;
+    background:#00ffff;
+    color:#000;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow:0 0 20px rgba(0,255,255,0.5);
+}
+
+/* TIMER */
+.timer{
+    margin-top:10px;
+    font-size:20px;
+    color:#00ff88;
+    text-shadow:0 0 10px #00ff88;
+}
+
+/* SENSI LOADING */
+#sensiLoading{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:999;
+}
+
+.bar{
+    width:0%;
+    height:4px;
+    background:#00ffff;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- KEY SCREEN -->
+<div id="keyScreen" class="screen active">
+<div class="box">
+
+<h2>FAKE NINJA 🔥</h2>
+
+<input id="keyInput" class="input" placeholder="ENTER KEY">
+
+<div class="row">
+<div class="btn" onclick="unlock()">UNLOCK</div>
+<div class="btn" onclick="pasteKey()">PASTE KEY</div>
+<div class="btn" onclick="goGenerate()">GENERATE KEY</div>
+</div>
+
+<div class="keyBox" id="keyDisplay">NO KEY GENERATED</div>
+
+<div class="copy" onclick="copyKey()">COPY KEY</div>
+
+<div class="timer" id="timer"></div>
+
+<p id="status"></p>
+
+</div>
+</div>
+
+<!-- SENSI SCREEN -->
+<div id="sensiScreen" class="screen">
+<div class="box">
+
+<h2>SENSI SYSTEM ⚡</h2>
+
+<div class="btn" onclick="genSensi()">GENERATE SENSI</div>
+
+<div id="device"></div>
+<div id="result"></div>
+
+</div>
+</div>
+
+<!-- SENSI LOADING -->
+<div id="sensiLoading" style="display:none;">
+<h3>Detecting device...</h3>
+<div class="bar" id="sensiBar"></div>
+</div>
+
+<script>
+
+/* GENERATE KEY */
+function generateKey(){
+let k="NINJA-"+Math.random().toString(36).substring(2,8).toUpperCase();
+let exp=Date.now()+60000;
+
+localStorage.setItem("key",k);
+localStorage.setItem("exp",exp);
+
+document.getElementById("keyDisplay").innerText=k;
+startTimer();
+}
+
+/* TIMER */
+function startTimer(){
+let t=setInterval(()=>{
+let left=localStorage.getItem("exp")-Date.now();
+
+if(left<=0){
+clearInterval(t);
+location.reload();
+}
+
+document.getElementById("timer").innerText=Math.floor(left/1000)+"s";
+},1000);
+}
+
+/* GENERATE BUTTON */
+function goGenerate(){
+localStorage.setItem("gen","1");
+window.location.href="https://alpharede.com/YOUR-LINK";
+}
+
+/* RETURN */
+if(localStorage.getItem("gen")){
+generateKey();
+localStorage.removeItem("gen");
+}
+
+/* COPY */
+function copyKey(){
+let k=document.getElementById("keyDisplay").innerText;
+navigator.clipboard.writeText(k);
+document.querySelector(".copy").innerText="COPIED";
+setTimeout(()=>{document.querySelector(".copy").innerText="COPY KEY";},2000);
+}
+
+/* PASTE */
+function pasteKey(){
+let t=prompt("Paste key");
+if(t) document.getElementById("keyInput").value=t;
+}
+
+/* UNLOCK */
+function unlock(){
+let i=document.getElementById("keyInput").value;
+let k=localStorage.getItem("key");
+
+if(i===k){
+document.getElementById("keyScreen").classList.remove("active");
+document.getElementById("sensiScreen").classList.add("active");
+}else{
+document.getElementById("status").innerText="INVALID KEY";
+}
+}
+
+/* DEVICE DETECT */
+function getDevice(){
+let ua=navigator.userAgent;
+if(/Android/i.test(ua)) return "Android";
+if(/iPhone/i.test(ua)) return "iPhone";
+return "Device";
+}
+
+/* SENSI */
+function genSensi(){
+
+document.getElementById("sensiScreen").style.display="none";
+document.getElementById("sensiLoading").style.display="flex";
+
+let bar=document.getElementById("sensiBar");
+let p=0;
+
+let int=setInterval(()=>{
+p+=5;
+bar.style.width=p+"%";
+
+if(p>=100){
+clearInterval(int);
+
+document.getElementById("sensiLoading").style.display="none";
+document.getElementById("sensiScreen").style.display="block";
+
+document.getElementById("device").innerText="Device: "+getDevice();
+
+document.getElementById("result").innerHTML=
+"General: "+(180+Math.random()*20|0)+"<br>"+
+"Red Dot: "+(180+Math.random()*20|0)+"<br>"+
+"2x: "+(180+Math.random()*20|0)+"<br>"+
+"4x: "+(180+Math.random()*20|0);
+}
+},100);
+}
+
+</script>
+
+</body>
+</html>
