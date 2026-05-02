@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meliox Glow System</title>
+<title>Meliox System</title>
 
 <style>
 body{
@@ -114,7 +114,7 @@ body::before{
 <div id="keyScreen" class="screen active">
 <div class="box">
 
-<h2>AIMBOT + 60% NO RECOIL SENSITIVITY 🔥</h2>
+<h2>NO RECOIL+AIMBOT SENSI🎯</h2>
 
 <input id="keyInput" class="input" placeholder="ENTER KEY">
 
@@ -151,7 +151,7 @@ body::before{
 
 <!-- SENSI LOADING -->
 <div id="sensiLoading" style="display:none;">
-<h3>Detecting device...</h3>
+<h3>DETECTIVING DEVICE TYPE...</h3>
 <div class="bar" id="sensiBar"></div>
 </div>
 
@@ -159,7 +159,7 @@ body::before{
 
 /* GENERATE KEY */
 function generateKey(){
-let k="MEL1OX-NORECOIL-"+Math.random().toString(36).substring(2,8).toUpperCase();
+let k="MEL1OX-AIMBOT-"+Math.random().toString(36).substring(2,8).toUpperCase();
 let exp=Date.now()+60000;
 
 localStorage.setItem("key",k);
@@ -183,17 +183,24 @@ document.getElementById("timer").innerText=Math.floor(left/1000)+"s";
 },1000);
 }
 
-/* 🔥 FIXED GENERATE BUTTON */
+/* 🔥 GENERATE BUTTON (START TIMER) */
 function goGenerate(){
-    // send user to your 6-step link WITH return flag
+    localStorage.setItem("startTime", Date.now());
     window.location.href = "https://alpharede.com/E3tBOqLO9bC";
 }
 
-/* 🔥 ONLY GENERATE IF RETURN HAS ?done=1 */
-const params = new URLSearchParams(window.location.search);
+/* 🔥 RETURN CHECK (ANTI-BYPASS) */
+let start = localStorage.getItem("startTime");
 
-if(params.get("done") === "1"){
-    generateKey();
+if(start){
+    let diff = (Date.now() - start) / 1000;
+
+    // must stay at least 20 seconds
+    if(diff > 20){
+        generateKey();
+    }
+
+    localStorage.removeItem("startTime");
 }
 
 /* COPY */
@@ -227,7 +234,7 @@ document.getElementById("status").innerText="INVALID KEY";
 function getDevice(){
 let ua=navigator.userAgent;
 if(/Android/i.test(ua)) return "Android";
-if(/iPhone/i.test(ua)) return "iPhone";
+if(/IOS/i.test(ua)) return "IOS";
 return "Device";
 }
 
