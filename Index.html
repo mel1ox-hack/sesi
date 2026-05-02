@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meliox System</title>
+<title>Meliox Secure System</title>
 
 <style>
 body{
@@ -10,14 +10,13 @@ body{
     font-family:monospace;
     background:#0a0f14;
     color:#00ffff;
-
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:100vh;
-    text-align:center;
 }
 
+/* GRID BG */
 body::before{
     content:"";
     position:fixed;
@@ -33,23 +32,23 @@ body::before{
 .active{display:block;}
 
 .box{
-    margin:0;
     padding:20px;
     width:90%;
     max-width:400px;
     border-radius:20px;
     background:rgba(10,20,30,0.9);
     box-shadow:0 0 25px rgba(0,255,255,0.25);
+    text-align:center;
 }
 
 .input{
     width:90%;
     padding:12px;
+    margin:10px;
     background:#000;
     border:1px solid #00ffff;
     color:#00ffff;
     border-radius:12px;
-    margin:10px;
 }
 
 .row{
@@ -82,9 +81,39 @@ body::before{
     cursor:pointer;
 }
 
-.timer{
-    margin-top:10px;
-    color:#00ff88;
+.timer{ margin-top:10px; color:#00ff88; }
+
+/* VERIFY */
+#verifyScreen{
+    position:fixed;
+    inset:0;
+    background:#0b0f14;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
+}
+
+.verifyBox{
+    border:1px solid #333;
+    padding:20px;
+    width:300px;
+    border-radius:10px;
+    background:#111;
+}
+
+.barWrap{
+    width:100%;
+    height:5px;
+    background:#222;
+    margin-top:20px;
+}
+
+.bar{
+    width:0%;
+    height:100%;
+    background:#00ffff;
 }
 
 /* SENSI LOADING */
@@ -96,25 +125,28 @@ body::before{
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    z-index:999;
-}
-
-.bar{
-    width:0%;
-    height:4px;
-    background:#00ffff;
-    margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- VERIFY SCREEN -->
+<div id="verifyScreen" style="display:none;">
+<div class="verifyBox">
+<h3>Checking your browser...</h3>
+<p>Please wait while we verify you are human</p>
+<div class="barWrap">
+<div class="bar" id="verifyBar"></div>
+</div>
+</div>
+</div>
+
 <!-- KEY SCREEN -->
 <div id="keyScreen" class="screen active">
 <div class="box">
 
-<h2>NO RECOIL+AIMBOT SENSI🎯</h2>
+<h2>AIMLOCK+NO RECOIL SENSI🎯</h2>
 
 <input id="keyInput" class="input" placeholder="ENTER KEY">
 
@@ -135,23 +167,19 @@ body::before{
 </div>
 </div>
 
-<!-- SENSI SCREEN -->
+<!-- SENSI -->
 <div id="sensiScreen" class="screen">
 <div class="box">
-
 <h2>SENSI SYSTEM ⚡</h2>
-
 <div class="btn" onclick="genSensi()">GENERATE SENSI</div>
-
 <div id="device"></div>
 <div id="result"></div>
-
 </div>
 </div>
 
 <!-- SENSI LOADING -->
 <div id="sensiLoading" style="display:none;">
-<h3>DETECTIVING DEVICE TYPE...</h3>
+<h3>Detecting device...</h3>
 <div class="bar" id="sensiBar"></div>
 </div>
 
@@ -172,35 +200,52 @@ startTimer();
 /* TIMER */
 function startTimer(){
 let t=setInterval(()=>{
-let left=localStorage.getItem("exp")-Date.now();
+let exp = localStorage.getItem("exp");
+let left = exp - Date.now();
 
-if(left<=0){
+if(left <= 0){
 clearInterval(t);
+localStorage.removeItem("key");
+localStorage.removeItem("exp");
 location.reload();
 }
 
-document.getElementById("timer").innerText=Math.floor(left/1000)+"s";
+document.getElementById("timer").innerText = Math.floor(left/1000)+"s";
 },1000);
 }
 
-/* 🔥 GENERATE BUTTON (START TIMER) */
+/* GENERATE BTN */
 function goGenerate(){
-    localStorage.setItem("startTime", Date.now());
-    window.location.href = "https://alpharede.com/E3tBOqLO9bC";
+localStorage.setItem("startTime", Date.now());
+window.location.href="https://alpharede.com/E3tBOqLO9bC";
 }
 
-/* 🔥 RETURN CHECK (ANTI-BYPASS) */
+/* RETURN CHECK */
 let start = localStorage.getItem("startTime");
 
 if(start){
-    let diff = (Date.now() - start) / 1000;
+let diff=(Date.now()-start)/1000;
 
-    // must stay at least 20 seconds
-    if(diff > 120){
-        generateKey();
-    }
+if(diff > 200){ // 5 mins
 
-    localStorage.removeItem("startTime");
+document.getElementById("verifyScreen").style.display="flex";
+
+let bar=document.getElementById("verifyBar");
+let p=0;
+
+let v=setInterval(()=>{
+p+=5;
+bar.style.width=p+"%";
+
+if(p>=100){
+clearInterval(v);
+document.getElementById("verifyScreen").style.display="none";
+generateKey();
+}
+},150);
+}
+
+localStorage.removeItem("startTime");
 }
 
 /* COPY */
@@ -217,16 +262,26 @@ let t=prompt("Paste key");
 if(t) document.getElementById("keyInput").value=t;
 }
 
-/* UNLOCK */
+/* 🔥 FIXED UNLOCK */
 function unlock(){
-let i=document.getElementById("keyInput").value;
-let k=localStorage.getItem("key");
+let input=document.getElementById("keyInput").value;
+let key=localStorage.getItem("key");
+let exp=localStorage.getItem("exp");
 
-if(i===k){
+// expired check
+if(!exp || Date.now() > exp){
+document.getElementById("status").innerText="KEY EXPIRED ❌";
+localStorage.removeItem("key");
+localStorage.removeItem("exp");
+return;
+}
+
+// correct key
+if(input === key){
 document.getElementById("keyScreen").classList.remove("active");
 document.getElementById("sensiScreen").classList.add("active");
 }else{
-document.getElementById("status").innerText="INVALID KEY";
+document.getElementById("status").innerText="INVALID KEY ❌";
 }
 }
 
@@ -240,7 +295,6 @@ return "Device";
 
 /* SENSI */
 function genSensi(){
-
 document.getElementById("sensiScreen").style.display="none";
 document.getElementById("sensiLoading").style.display="flex";
 
@@ -253,7 +307,6 @@ bar.style.width=p+"%";
 
 if(p>=100){
 clearInterval(int);
-
 document.getElementById("sensiLoading").style.display="none";
 document.getElementById("sensiScreen").style.display="block";
 
